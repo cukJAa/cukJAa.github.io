@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<!--
+  scroll-smooth → makes clicking navbar links scroll smoothly instead of jumping
+-->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jurgen Çukaj | Developer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!--
+    WHY CDN and not npm?
+    - For a portfolio (static site) CDN is perfectly fine
+    - No build step needed, open the file and it works
+    - When you get a job or build real apps → switch to npm + Tailwind CLI
+  -->
+
+  <script>
+    /*
+      Tailwind config: this is where you EXTEND Tailwind's defaults.
+      Instead of typing long color hex codes everywhere, you define
+      a name once here and use it like any Tailwind class.
+
+      primary → main dark background
+      card    → slightly lighter dark for cards
+      accent  → the highlight/brand color (sky blue)
+    */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0f172a",   /* slate-900 */
+            card:    "#1e293b",   /* slate-800 */
+            accent:  "#38bdf8",   /* sky-400   */
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /*
+      WHY use <style> if we have Tailwind?
+      Some things Tailwind can't do easily (custom animations, gradients on text).
+      We keep it minimal — only what Tailwind can't handle.
+    */
+
+    /* Makes text show as a gradient instead of a solid color */
+    .gradient-text {
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;           /* standard property for non-webkit browsers */
+      -webkit-text-fill-color: transparent;
+      color: transparent;              /* fallback for browsers that don't support -webkit-text-fill-color */
+    }
+
+    /* Blinking cursor effect on the hero name */
+    .cursor::after {
+      content: "|";
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* Elements start invisible and slide up, then become visible when JS adds .visible */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Breadcrumb slide-in animation
+       The section name slides in from the left and settles into place */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);  /* starts 10px to the left */
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);      /* ends at its normal position */
+      }
+    }
+    @keyframes slideOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(10px);   /* exits to the right */
+      }
+    }
+    .breadcrumb-enter {
+      animation: slideIn 0.3s ease forwards;
+    }
+    .breadcrumb-exit {
+      animation: slideOut 0.2s ease forwards;
+    }
+  </style>
+</head>
+
+<!-- ============================================================
+  BODY
+  bg-primary  → dark navy background color (defined in config above)
+  text-white  → default text is white
+  font-mono   → monospace font gives a "dev/hacker" feel
+============================================================ -->
+<body class="bg-primary text-white font-mono">
+
+
+  <!-- ===========================================================
+    SECTION 1: NAVBAR
+
+    THINKING: A navbar needs to:
+    - Stay at the top always          → fixed top-0 w-full z-50
+    - Not block content behind it     → backdrop-blur + bg opacity
+    - Have logo on left, links right  → flex justify-between
+    - Separate from page content      → border-b
+  =========================================================== -->
+  <nav class="fixed top-0 w-full z-50 bg-primary/80 backdrop-blur-sm border-b border-slate-800">
+
+    <!--
+      max-w-6xl  → content won't stretch too wide on big screens
+      mx-auto    → centers the content horizontally
+      px-6 py-4  → padding: left/right 24px, top/bottom 16px
+      flex       → puts children side by side (logo + links)
+      justify-between → pushes logo to left, links to right
+      items-center   → aligns them vertically in the middle
+    -->
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+
+      <!-- Logo / Brand name — the section part updates as you scroll -->
+      <a href="#home" class="text-accent font-bold text-lg">
+        ./jurgenCukaj<span id="breadcrumb" class="text-slate-400 inline-block"></span>
+      </a>
+
+      <!--
+        ul = unordered list → each link is a list item
+        flex gap-6  → puts links side by side with spacing
+        text-sm     → smaller font for nav links
+        text-slate-400 → muted gray color (not full white)
+      -->
+      <ul class="flex gap-6 text-sm text-slate-400">
+        <!-- hover:text-accent transition → turns sky-blue on hover, smoothly -->
+        <li><a href="#about"    class="hover:text-accent transition">About</a></li>
+        <li><a href="#skills"   class="hover:text-accent transition">Skills</a></li>
+        <li><a href="#projects" class="hover:text-accent transition">Projects</a></li>
+        <li><a href="#contact"  class="hover:text-accent transition">Contact</a></li>
+        <!-- Resume button: has a visible border to stand out from other links -->
+        <li>
+          <a href="assets/cv.pdf" target="_blank"
+             class="border border-accent text-accent px-3 py-1 rounded
+                    hover:bg-accent hover:text-primary transition">
+            Resume
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- ===========================================================
+    SECTION 2: HERO
+
+    THINKING: The hero is the FIRST thing people see — it must:
+    - Take the full screen height         → min-h-screen
+    - Center everything                   → flex flex-col items-center justify-center
+    - Have your name BIG                  → text-5xl (mobile) md:text-7xl (desktop)
+    - Have 2 buttons: work + contact
+    - Have a small scroll hint at the bottom
+
+    THE md: PREFIX:
+    md:text-7xl means "on medium screens and up, use text-7xl"
+    On mobile it stays text-5xl. This is how you make responsive designs.
+  =========================================================== -->
+  <section id="home" class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20 relative">
+
+    <!-- Small label above the name — "relative" to stand out -->
+    <p class="text-accent text-sm mb-4 tracking-widest uppercase">Hello, World!</p>
+
+    <!-- Your name — big, gradient, with blinking cursor -->
+    <h1 class="text-5xl md:text-7xl font-bold mb-4">
+      I'm <span class="gradient-text cursor">Jurgen Cukaj</span>
+    </h1>
+
+    <!--
+      Your title line
+      max-w-2xl → limits line width so it doesn't stretch too wide
+      leading-relaxed → more space between lines (line-height)
+    -->
+    <p class="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
+      Full Stack Developer &nbsp;·&nbsp; Data Science &nbsp;·&nbsp; Cybersecurity
+    </p>
+
+    <!-- CTA Buttons -->
+    <div class="flex gap-4 flex-wrap justify-center">
+      <!--
+        Primary button: solid fill
+        bg-accent → sky-blue background
+        text-primary → dark text so it's readable on the blue bg
+      -->
+      <a href="#projects"
+         class="bg-accent text-primary font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+        View My Work
+      </a>
+      <!-- Secondary button: just a border -->
+      <a href="#contact"
+         class="border border-slate-600 text-slate-300 px-6 py-3 rounded-lg
+                hover:border-accent hover:text-accent transition">
+        Get In Touch
+      </a>
+    </div>
+
+    <!-- Social links row -->
+    <div class="flex gap-8 mt-12 text-slate-500 text-sm">
+      <a href="https://github.com/cukJAa"       target="_blank" class="hover:text-accent transition">GitHub</a>
+      <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217/"  target="_blank" class="hover:text-accent transition">LinkedIn</a>
+      <a href="mailto:jurgencukaj@gmail.com"                               class="hover:text-accent transition">Email</a>
+    </div>
+
+    <!-- Scroll down indicator (visual hint) -->
+    <!--
+      absolute bottom-10 → pinned to bottom of this section
+      We use a thin line fading to transparent to suggest "scroll down"
+    -->
+    <div class="absolute bottom-10 flex flex-col items-center gap-2 text-slate-600 text-xs">
+      <span>scroll</span>
+      <div class="w-px h-10 bg-gradient-to-b from-slate-600 to-transparent"></div>
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+    SECTION 3: ABOUT
+
+    THINKING:
+    - py-24 → big vertical padding so sections breathe
+    - max-w-6xl mx-auto → content stays centered and readable
+    - grid md:grid-cols-2 → 2 columns on desktop, 1 on mobile
+    - fade-in class → JS will animate this in when user scrolls to it
+  =========================================================== -->
+  <section id="about" class="py-24 px-6 fade-in">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Section heading (same pattern for all sections) -->
+      <h2 class="text-3xl font-bold mb-2">
+        <span class="text-accent">/</span>aboutMe
+      </h2>
+      <!-- Decorative line under heading -->
+      <div class="w-16 h-px bg-accent mb-10"></div>
+
+      <!-- 2-column layout: text left, stats right -->
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: text paragraphs -->
+        <div class="space-y-4 text-slate-300 leading-relaxed">
+          <!--
+            space-y-4 → adds margin-top: 16px between each child
+            This is easier than adding mb-4 to every paragraph
+          -->
+          <p>
+            I'm a developer exploring the intersection of
+            <span class="text-accent">web development</span>,
+            <span class="text-accent">data science</span>, and
+            <span class="text-accent">cybersecurity</span>.
+          </p>
+          <p>
+            I believe in learning by doing — every project here represents
+            a real problem I tried to solve or a concept I wanted to understand deeply.
+          </p>
+          <p>
+            When I'm not building, I'm doing CTF challenges,
+            analyzing datasets, or reading security papers.
+          </p>
+        </div>
+
+        <!-- Right: stat cards in a 2x2 grid -->
+        <!--
+          grid grid-cols-2 gap-4 → 2 columns of equal width
+          Each card: bg-card (dark card color) border rounded padding
+        -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-card border border-slate-700 rounded-xl p-5">
+            <p class="text-3xl font-bold text-accent">3+</p>
+            <p class="text-slate-400 text-sm mt-1">Fields of focus</p>
+          </div>
+          <div class="bg-card border border-slate-700 rounded-xl p-5">
+            <p class="text-3xl font-bold text-accent">10+</p>
+            <p class="text-slate-400 text-sm mt-1">Projects built</p>
+          </div>
+          <div class="bg-card border border-slate-700 rounded-xl p-5">
+            <p class="text-3xl font-bold text-accent">∞</p>
+            <p class="text-slate-400 text-sm mt-1">Things to learn</p>
+          </div>
+          <div class="bg-card border border-slate-700 rounded-xl p-5">
+            <p class="text-3xl font-bold text-accent">100%</p>
+            <p class="text-slate-400 text-sm mt-1">Passion driven</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+    SECTION 4: SKILLS
+
+    THINKING:
+    - 3 columns → one per field (Full Stack / Data Science / Security)
+    - Each card has a different accent color to visually separate the domains
+    - bg-card/30 on the section → slightly different bg than surrounding sections
+      (the /30 means 30% opacity — a subtle way to create visual separation)
+  =========================================================== -->
+  <section id="skills" class="py-24 px-6 bg-card/30 fade-in">
+    <div class="max-w-6xl mx-auto">
+
+      <h2 class="text-3xl font-bold mb-2">
+        <span class="text-accent">/</span>skills
+      </h2>
+      <div class="w-16 h-px bg-accent mb-10"></div>
+
+      <!-- 3 columns on desktop, 1 on mobile -->
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <!-- CARD 1: Full Stack -->
+        <!--
+          hover:border-accent → border turns accent color on hover
+          transition → smooth animation on hover
+          flex flex-col → allows us to stretch the card to full height
+        -->
+        <div class="bg-card border border-slate-700 rounded-xl p-6 hover:border-accent transition">
+          <div class="text-3xl mb-3">🌐</div>
+          <h3 class="text-accent font-semibold text-lg mb-4">Full Stack</h3>
+          <!--
+            space-y-2 → spacing between list items
+            Each item uses a colored dot (w-2 h-2 rounded-full bg-color)
+            instead of a bullet point — cleaner look
+          -->
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>HTML · CSS · Tailwind CSS</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>JavaScript · TypeScript</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>React · Next.js</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>Node.js · Express</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>PostgreSQL · MongoDB</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-accent rounded-full flex-shrink-0"></span>REST APIs · Git · Docker</li>
+          </ul>
+        </div>
+
+        <!-- CARD 2: Data Science (purple accent to differentiate) -->
+        <div class="bg-card border border-slate-700 rounded-xl p-6 hover:border-purple-400 transition">
+          <div class="text-3xl mb-3">📊</div>
+          <h3 class="text-purple-400 font-semibold text-lg mb-4">Data Science</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>Python · Pandas · NumPy</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>Matplotlib · Seaborn</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>Scikit-learn</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>Jupyter Notebooks</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>SQL · Data Cleaning</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></span>ML fundamentals</li>
+          </ul>
+        </div>
+
+        <!-- CARD 3: Cybersecurity (red accent) -->
+        <div class="bg-card border border-slate-700 rounded-xl p-6 hover:border-red-400 transition">
+          <div class="text-3xl mb-3">🔐</div>
+          <h3 class="text-red-400 font-semibold text-lg mb-4">Cybersecurity</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>Linux · Bash scripting</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>Networking basics (TCP/IP)</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>OWASP Top 10</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>CTF Challenges</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>Burp Suite · Nmap</li>
+            <li class="flex items-center gap-2"><span class="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></span>Secure coding practices</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+    SECTION 5: PROJECTS
+
+    THINKING:
+    - Each project is a "card" → bg-card, border, rounded, padding
+    - Card must have: icon · links · title · description · tech badges
+    - Cards in a 3-column responsive grid
+    - Filter buttons to show only one category at a time
+    - data-category attribute on each card → JS reads this to filter
+
+    HOW THE FILTER WORKS:
+    Each card has data-category="fullstack" (or datascience / security)
+    The filter buttons call filterProjects("fullstack") → JS hides all cards
+    that don't match that category using display:none
+  =========================================================== -->
+  <section id="projects" class="py-24 px-6 fade-in">
+    <div class="max-w-6xl mx-auto">
+
+      <h2 class="text-3xl font-bold mb-2">
+        <span class="text-accent">/</span>projects
+      </h2>
+      <div class="w-16 h-px bg-accent mb-6"></div>
+
+      <!-- Filter buttons -->
+      <div class="flex gap-3 mb-10 flex-wrap">
+        <!--
+          Each button calls filterProjects() with a category string
+          The JS function will:
+          1. Show/hide cards based on data-category
+          2. Update button styles (active vs inactive)
+        -->
+        <button onclick="filterProjects('all', this)"
+          class="px-4 py-1.5 rounded-full text-sm border border-accent text-accent">
+          All
+        </button>
+        <button onclick="filterProjects('fullstack', this)"
+          class="px-4 py-1.5 rounded-full text-sm border border-slate-700 text-slate-400 hover:border-accent hover:text-accent transition">
+          Full Stack
+        </button>
+        <button onclick="filterProjects('datascience', this)"
+          class="px-4 py-1.5 rounded-full text-sm border border-slate-700 text-slate-400 hover:border-accent hover:text-accent transition">
+          Data Science
+        </button>
+        <button onclick="filterProjects('security', this)"
+          class="px-4 py-1.5 rounded-full text-sm border border-slate-700 text-slate-400 hover:border-accent hover:text-accent transition">
+          Security
+        </button>
+      </div>
+
+      <!-- Project cards -->
+      <!--
+        flex flex-col on each card → lets us push tech badges to the bottom
+        The trick: description has flex-1 → it grows to fill space
+        So all cards are equal height and badges align at the bottom
+      -->
+      <div id="projects-grid" class="grid md:grid-cols-2 gap-8">
+
+        <!-- ── PROJECT CARD TEMPLATE ──────────────────────────────
+          To add a new project: copy this block, change the values.
+          data-category must be: fullstack | datascience | security
+        ──────────────────────────────────────────────────────── -->
+
+        
+
+
+      </div><!-- /projects-grid -->
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+    SECTION 6: CONTACT
+
+    THINKING:
+    - Simple and focused: just an email button + socials
+    - max-w-2xl and text-center → narrow, centered, easy to read
+    - One clear action: "Say Hello" button → opens email client
+  =========================================================== -->
+  <section id="contact" class="py-24 px-6 bg-card/30 fade-in">
+    <div class="max-w-2xl mx-auto text-center">
+
+      <h2 class="text-3xl font-bold mb-2">
+        <span class="text-accent">/</span>getInTouch
+      </h2>
+      <div class="w-16 h-px bg-accent mx-auto mb-6"></div>
+
+      <p class="text-slate-400 leading-relaxed mb-10">
+        Open to new opportunities, freelance projects, or just a conversation about tech.
+        I'll get back to you as soon as possible.
+      </p>
+
+      <a href="mailto:you@email.com"
+         class="inline-block bg-accent text-primary font-semibold px-8 py-4 rounded-lg
+                hover:opacity-90 transition text-lg mb-10">
+        Say Hello →
+      </a>
+
+      <div class="flex justify-center gap-8 text-slate-500 text-sm mt-6">
+        <a href="https://github.com/yourusername"      target="_blank" class="hover:text-accent transition">GitHub</a>
+        <a href="https://linkedin.com/in/yourusername" target="_blank" class="hover:text-accent transition">LinkedIn</a>
+        <!-- <a href="https://twitter.com/yourusername"     target="_blank" class="hover:text-accent transition">Twitter / X</a> -->
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 py-6 text-center text-slate-600 text-sm">
+    <p>Designed & Built by <span class="text-accent">Jurgen Çukaj</span> · 2026</p>
+    <p class="mt-1 text-xs">HTML · Tailwind CSS · Hosted on GitHub Pages</p>
+  </footer>
+
+
+  <!-- ===========================================================
+    JAVASCRIPT
+
+    THINKING: JS is kept at the BOTTOM of the body.
+    WHY? Because HTML loads top-to-bottom. If JS is in <head>,
+    it runs before the HTML elements exist → errors.
+    At the bottom of body → all elements exist before JS runs.
+
+    We need 2 things:
+    1. Scroll animation → watch when elements enter the viewport
+    2. Project filter → show/hide cards by category
+  =========================================================== -->
+  <script>
+    /*
+      INTERSECTION OBSERVER API
+      This is the modern way to detect when an element becomes visible on screen.
+
+      How it works:
+      - We select all elements with class .fade-in
+      - For each one, we "observe" it (watch it)
+      - When it enters the viewport (isIntersecting = true), we add class .visible
+      - The CSS .fade-in.visible transition animates it in (opacity + translateY)
+    */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 }); // trigger when 10% of element is visible
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+
+    /*
+      BREADCRUMB NAVIGATION
+
+      As you scroll, the navbar logo shows your current "path":
+        ./jurgenCukaj           (at top)
+        ./jurgenCukaj/aboutMe   (scrolled to about)
+        ./jurgenCukaj/skills    (scrolled to skills)
+
+      The section name slides in from the left when entering,
+      and slides out to the right when leaving.
+
+      HOW IT WORKS:
+      - We use scroll event + getBoundingClientRect() instead of IntersectionObserver
+        because it gives us precise control over WHEN the switch happens
+      - On every scroll, we check which section's top edge is closest to
+        the top of the viewport (with a small offset for the navbar)
+      - When the active section changes, we animate the breadcrumb
+    */
+    const breadcrumb = document.getElementById('breadcrumb');
+    let currentSection = '';  // tracks what's currently shown
+
+    // Map section IDs to display names
+    const sectionNames = {
+      home: '',
+      about: '/aboutMe',
+      skills: '/skills',
+      projects: '/projects',
+      contact: '/getInTouch'
+    };
+
+    // Get all sections once (don't query the DOM on every scroll)
+    const sections = document.querySelectorAll('section[id]');
+
+    function updateBreadcrumb() {
+      let activeId = 'home';  // default when at the top
+
+      // Loop through sections and find which one the user is IN
+      // A section is "active" when its top has scrolled past the top of the viewport
+      // We use 150px offset to account for the navbar height + a bit of buffer
+      sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        // If the section's top is above 150px from the top of the viewport,
+        // the user has scrolled INTO or PAST this section
+        if (rect.top <= 150) {
+          activeId = section.id;
+        }
+      });
+
+      const newSuffix = sectionNames[activeId] || '';
+
+      // Only animate if the section actually changed
+      if (newSuffix === currentSection) return;
+
+      // If there's existing text, slide it out first, then slide new text in
+      if (currentSection !== '') {
+        // Slide out the old text
+        breadcrumb.className = 'text-slate-400 inline-block breadcrumb-exit';
+        setTimeout(() => {
+          breadcrumb.textContent = newSuffix;
+          breadcrumb.className = 'text-slate-400 inline-block breadcrumb-enter';
+        }, 200);  // wait for slide-out to finish (matches slideOut duration)
+      } else {
+        // No old text (first load or returning to home) — just slide in
+        breadcrumb.textContent = newSuffix;
+        if (newSuffix) {
+          breadcrumb.className = 'text-slate-400 inline-block breadcrumb-enter';
+        } else {
+          breadcrumb.className = 'text-slate-400 inline-block';
+        }
+      }
+
+      currentSection = newSuffix;
+    }
+
+    // Listen to scroll events
+    // We use passive: true for better scroll performance
+    // (tells the browser we won't call preventDefault)
+    window.addEventListener('scroll', updateBreadcrumb, { passive: true });
+
+    // Run once on page load in case user refreshed while scrolled down
+    updateBreadcrumb();
+
+
+    /*
+      PROJECT FILTER FUNCTION
+
+      How it works:
+      1. Get all elements with class .project-card
+      2. For each card, check its data-category attribute
+      3. If category matches (or "all" selected) → show it (display: flex)
+      4. If it doesn't match → hide it (display: none)
+      5. Update button styles: active button gets accent color border
+    */
+    function filterProjects(category, clickedBtn) {
+      // Show/hide cards
+      document.querySelectorAll('.project-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Reset all buttons to inactive style
+      document.querySelectorAll('[onclick^="filterProjects"]').forEach(btn => {
+        btn.className = 'px-4 py-1.5 rounded-full text-sm border border-slate-700 text-slate-400 hover:border-accent hover:text-accent transition';
+      });
+
+      // Set clicked button to active style
+      clickedBtn.className = 'px-4 py-1.5 rounded-full text-sm border border-accent text-accent';
+    }
+
+
+    /*
+      DYNAMIC PROJECT CARDS
+
+      Instead of writing HTML cards by hand, we:
+      1. Load project data from projects.json (using fetch)
+      2. For each project, build a card as an HTML string
+      3. Insert all cards into the #projects-grid div
+
+      WHY fetch()?
+      fetch() asks the browser to load a file and give us its contents.
+      It returns a "Promise" — meaning "I'll give you the data later, not right now"
+      That's why we use .then() — it says "when the data arrives, do this"
+    */
+
+    // Step 1: Load the JSON file
+    fetch('projects.json')
+
+      // Step 2: Convert the raw response into a JavaScript array
+      // response.json() turns the text "[ { title: ... } ]" into actual JS objects
+      .then(response => response.json())
+
+      // Step 3: Now "projects" is a JavaScript array we can loop through
+      .then(projects => {
+
+        // Get the empty div where cards will go
+        const grid = document.getElementById('projects-grid');
+
+        // Color mapping: each category gets a different accent color
+        // This matches the colors used in the Skills section
+        const colors = {
+          fullstack: 'accent',       // sky blue
+          datascience: 'purple-400', // purple
+          security: 'red-400'       // red
+        };
+
+        // Build HTML for ALL cards, then insert at once
+        // .map() transforms each project object into an HTML string
+        // .join('') combines all the strings into one big string
+        grid.innerHTML = projects.map(project => {
+
+          // Pick the color for this project's category
+          // If category not found in our map, default to 'accent'
+          const color = colors[project.category] || 'accent';
+
+          // Build the tech badges
+          // project.technologies is an array like ["Django", "PostgreSQL", "Bootstrap"]
+          // .map() turns each tech name into a <span> badge
+          // .join('') glues them together into one string
+          const techBadges = project.technologies
+            .map(tech => `<span class="bg-slate-900 text-${color} text-xs px-2 py-1 rounded">${tech}</span>`)
+            .join('');
+
+          // Build the links (GitHub and/or Live)
+          // The ? : is a ternary — "if this exists, show the link, otherwise show nothing"
+          const githubLink = project.links.github
+            ? `<a href="${project.links.github}" target="_blank" class="text-slate-500 hover:text-${color} transition">GitHub</a>`
+            : '';
+          const liveLink = project.links.live
+            ? `<a href="${project.links.live}" target="_blank" class="text-slate-500 hover:text-${color} transition">Live ↗</a>`
+            : '';
+
+          // Build the image HTML
+          // overflow-hidden on the card clips the image to the rounded corners
+          // The card uses p-0 at top (no padding) so image touches edges
+          // Then a separate div with p-6 wraps the text content below
+          const imageHtml = project.image
+            ? `<img src="${project.image}" alt="${project.title}" class="w-full h-56 object-cover" />`
+            : '';
+
+          return `
+            <div class="project-card bg-card border border-slate-700 rounded-xl
+                        overflow-hidden hover:border-${color} transition flex flex-col"
+                 data-category="${project.category}">
+
+              <!-- Screenshot preview (if available) — sits at the top, edge to edge -->
+              ${imageHtml}
+
+              <!-- Card content with padding -->
+              <div class="p-6 flex flex-col gap-4 flex-1">
+
+                <!-- Links row: GitHub + Live on the left -->
+                <div class="flex gap-4 text-sm">
+                  ${githubLink}
+                  ${liveLink}
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-white font-semibold text-lg">${project.title}</h3>
+
+                <!-- Description -->
+                <p class="text-slate-400 text-sm leading-relaxed flex-1">
+                  ${project.description}
+                </p>
+
+                <!-- Tech badges -->
+                <div class="flex flex-wrap gap-2">
+                  ${techBadges}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');  // .join('') combines all card strings into one
+
+      })
+
+      // If something goes wrong (file not found, bad JSON, etc.), log the error
+      .catch(error => console.error('Error loading projects:', error));
+
+  </script>
+
+</body>
+</html>
