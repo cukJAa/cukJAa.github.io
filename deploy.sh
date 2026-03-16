@@ -30,7 +30,8 @@ else
     echo "Current directory $(pwd)"
     git add .
     git commit -m "New project added"
-    git push 
+    git status
+    git push -u origin HEAD --dry-run
 fi
 
 
