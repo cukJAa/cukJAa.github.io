@@ -29,6 +29,7 @@ else
     git add .
     git commit -m "New project added name ${projects_titles[0]}"
     git status
+    echo "The project title is: ${projects_titles[@]}"
     echo "The project title is: ${projects_titles[0]}"
     git push -u origin HEAD --dry-run
 fi
