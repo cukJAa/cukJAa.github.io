@@ -32,7 +32,7 @@ else
     echo "The project title is: ${projects_titles[0]}"
     git commit -m "New project added name ${projects_titles[0]}"
     git status
-    git push -u origin HEAD --dry-run
+    git push -u origin HEAD 
 fi
 
 
