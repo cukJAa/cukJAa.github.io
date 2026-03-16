@@ -21,7 +21,8 @@ count_folders=${#folders_names[@]}
 echo "Number of fodlers: $count_folders"
 
 if [ $count = $count_folders ]; then 
-    echo "The number of Json titles is: $count the same with the number of folders in directory projects which is: $count_folders"
+    echo "The number of Json titles is: $count the same with the number of folders 
+    in directory projects which is: $count_folders so script will do nothing else"
 else 
     echo "Current directory $(pwd)"
     cd ../portofolioMain 
@@ -29,7 +30,7 @@ else
     echo "Current directory $(pwd)"
     git add .
     git commit -m "New project added"
-    git push -u origin
+    git push 
 fi
 
 
