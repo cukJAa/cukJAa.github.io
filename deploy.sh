@@ -27,11 +27,11 @@ else
     python3 build_projects.py
     echo "Current directory $(pwd)"
     git add .
-    git commit -m "New project added name ${projects_titles[0]}"
-    git status
     readarray -t projects_titles < <(jq -r '.[].title' projects.json)
     echo "The project title is: ${projects_titles[@]}"
     echo "The project title is: ${projects_titles[0]}"
+    git commit -m "New project added name ${projects_titles[0]}"
+    git status
     git push -u origin HEAD --dry-run
 fi
 
