@@ -3,9 +3,7 @@
 echo "Script started at $(date)"
 
 echo "Current directory: $(pwd)"
-# cat projects.json
-# jq '.[].title' projects.json 
-# projects_titles=($(jq '.[].title' projects.json ))
+
 
 readarray -t projects_titles < <(jq -r '.[].title' projects.json)
 count=${#projects_titles[@]}
@@ -31,7 +29,7 @@ else
     git add .
     git commit -m "New project added name ${projects_titles[0]}"
     git status
-    echo "The pproject title is: ${projects_titles[0]}"
+    echo "The project title is: ${projects_titles[0]}"
     git push -u origin HEAD --dry-run
 fi
 
