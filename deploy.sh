@@ -29,7 +29,7 @@ else
     python3 build_projects.py
     echo "Current directory $(pwd)"
     git add .
-    git commit -m "New project added name ${folders_names[0]}"
+    git commit -m "New project added name ${projects_titles[0]}"
     git status
     git push -u origin HEAD --dry-run
 fi
