@@ -1,12 +1,15 @@
 [
     {
         "title": "n'Log Art",
-        "description": "",
-        "category": "",
-        "image": "",
+        "description": "n'LOG Gallery is an online art platform that brings traditional Albanian art to a wider audience. The gallery features a curated collection of original paintings and handcrafted olive wood sculptures, each carrying the spirit of Albanian culture, heritage, and craftsmanship. Visitors can browse the collection, view detailed product pages, and place orders directly through the website.",
+        "category": "fullstack",
+        "image": "images/nlogArt.webp",
         "icon": "",
-        "technologies": "",
-        "links": ""
+        "technologies": "HTML, CSS, JavaScript",
+        "links": {
+            "live": "https://www.nlogart.com",
+            "github": "https://github.com/cukJAa/LogArt"
+        }
     },
     {
         "title": "Raporto Dhunen",
