@@ -28,8 +28,10 @@ else
     echo "Current directory $(pwd)"
     readarray -t projects_titles < <(jq -r '.[].title' projects.json)
     echo "The project title is: ${projects_titles[@]}"
+    branch_name=$(echo "${projects_titles[-1]}" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
     echo "The project title is: ${projects_titles[-1]}"
-    git checkout -b "${projects_titles[-1]}"
+    echo "Branch name: $branch_name"
+    git checkout -b "$branch_name" || { echo "Failed to create branch, exiting"; exit 1; }
     git add .
     git commit -m "New project added name ${projects_titles[-1]}"
     git status
