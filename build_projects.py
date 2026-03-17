@@ -14,7 +14,7 @@ def main():
     
     main_projects_json_path  = "/home/cukjahp/Desktop/portofolio/portofolioMain/projects.json"
 
-    if os.path.exists(main_projects_json_path):
+    if os.path.exists(main_projects_json_path) and os.path.getsize(main_projects_json_path) > 0:
         with open(main_projects_json_path, "r") as f:
             projects = json.load(f)
     else:

@@ -24,7 +24,7 @@ if [ $count = $count_folders ]; then
 else 
     echo "Current directory $(pwd)"
     cd ../portofolioMain 
-    python3 build_projects.py
+    python3 build_projects.py || { echo "build_projects.py failed, exiting"; exit 1; }
     echo "Current directory $(pwd)"
     readarray -t projects_titles < <(jq -r '.[].title' projects.json)
     echo "The project title is: ${projects_titles[@]}"
