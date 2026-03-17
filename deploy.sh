@@ -28,10 +28,10 @@ else
     echo "Current directory $(pwd)"
     readarray -t projects_titles < <(jq -r '.[].title' projects.json)
     echo "The project title is: ${projects_titles[@]}"
-    echo "The project title is: ${projects_titles[0]}"
-    git checkout -b ${projects_titles[0]}
+    echo "The project title is: ${projects_titles[-1]}"
+    git checkout -b "${projects_titles[-1]}"
     git add .
-    git commit -m "New project added name ${projects_titles[0]}"
+    git commit -m "New project added name ${projects_titles[-1]}"
     git status
     git push -u origin HEAD 
 fi
