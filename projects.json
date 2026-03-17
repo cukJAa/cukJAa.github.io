@@ -1,19 +1,12 @@
 [
     {
-        "title": "Test",
-        "description": "Testing teststestatsetstetsetstetsetes",
-        "category": "fullstack",
-        "image": "images/courier.webp",
-        "icon": " ",
-        "technologies": [
-            "Django",
-            "PostgreSQL",
-            "Bootstrap"
-        ],
-        "links": {
-            "live": "https://courier-gut8.onrender.com",
-            "github": "https://github.com/cukJAa/courier"
-        }
+        "title": "n'Log Art",
+        "description": "",
+        "category": "",
+        "image": "",
+        "icon": "",
+        "technologies": "",
+        "links": ""
     },
     {
         "title": "Raporto Dhunen",
