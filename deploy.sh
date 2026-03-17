@@ -1,0 +1,54 @@
+#!/bin/bash
+
+echo "Script started at $(date)"
+
+echo "Current directory: $(pwd)"
+
+
+readarray -t projects_titles < <(jq -r '.[].title' projects.json)
+count=${#projects_titles[@]}
+echo "Projects: ${projects_titles[@]}"
+echo "Number of project: $count"
+
+cd ../projects
+echo "Current directory: $(pwd)"
+find . -maxdepth 1 -type d ! -path .
+readarray -t folders_names < <(find . -maxdepth 1 -type d ! -path .)
+echo "Array of folders names: ${folders_names[@]}"
+count_folders=${#folders_names[@]}
+echo "Number of fodlers: $count_folders"
+
+if [ $count = $count_folders ]; then 
+    echo "The number of Json titles is: $count the same with the number of folders 
+    in directory projects which is: $count_folders so script will do nothing else"
+else 
+    echo "Current directory $(pwd)"
+    cd ../portofolioMain 
+    python3 build_projects.py || { echo "build_projects.py failed, exiting"; exit 1; }
+    echo "Current directory $(pwd)"
+    readarray -t projects_titles < <(jq -r '.[].title' projects.json)
+    echo "The project title is: ${projects_titles[@]}"
+    branch_name=$(echo "${projects_titles[-1]}" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+    echo "The project title is: ${projects_titles[-1]}"
+    echo "Branch name: $branch_name"
+    git checkout -b "$branch_name" || { echo "Failed to create branch, exiting"; exit 1; }
+    git add .
+    git commit -m "New project added name ${projects_titles[-1]}"
+    git status
+    git push -u origin HEAD 
+fi
+
+
+
+
+
+
+
+
+# Add the shebang line (#!/bin/bash)
+# Print a message so you know the script started (use echo)
+# Run python3 build_projects.py to regenerate projects.json
+# cd into projects folder and we print if we in the right folder
+# count the number of object in projects.json and maybe you can print out that one 
+
+

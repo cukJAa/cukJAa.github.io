@@ -1,22 +1,5 @@
 [
     {
-        "title": "Raporto Dhunen",
-        "description": "Web platform developed with the support and funding of the European Union , dedicated to combating domestic violence. Built with HTML, CSS, JavaScript, and PHP. The platform enables individuals to report domestic violence incidents, access information about legal rights and protections, and stay informed about relevant legislation and available support resources.",
-        "category": "fullstack",
-        "image": "images/raportoDhunen.webp",
-        "icon": " ",
-        "technologies": [
-            "HTML",
-            "CSS",
-            "JavaScript",
-            "PHP"
-        ],
-        "links": {
-            "live": "https://raportodhunen.com",
-            "github": "https://github.com/cukJAa/raportodhunen"
-        }
-    },
-    {
         "title": "Courier Management System",
         "description": "Full-stack web application for managing courier/delivery operations. Features role-based access control (5 user roles), order lifecycle management with QR code scanning, cash-on-delivery tracking, financial settlement system with immutable audit trails, warehouse inventory management, and PDF/Excel report generation. Includes CI/CD pipeline with GitHub Actions and automated deployment.",
         "category": "fullstack",
