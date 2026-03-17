@@ -1,17 +1,5 @@
 [
     {
-        "title": "n'Log Art",
-        "description": "n'LOG Gallery is an online art platform that brings traditional Albanian art to a wider audience. The gallery features a curated collection of original paintings and handcrafted olive wood sculptures, each carrying the spirit of Albanian culture, heritage, and craftsmanship. Visitors can browse the collection, view detailed product pages, and place orders directly through the website.",
-        "category": "fullstack",
-        "image": "images/nlogArt.webp",
-        "icon": "",
-        "technologies": "HTML, CSS, JavaScript",
-        "links": {
-            "live": "https://www.nlogart.com",
-            "github": "https://github.com/cukJAa/LogArt"
-        }
-    },
-    {
         "title": "Raporto Dhunen",
         "description": "Web platform developed with the support and funding of the European Union , dedicated to combating domestic violence. Built with HTML, CSS, JavaScript, and PHP. The platform enables individuals to report domestic violence incidents, access information about legal rights and protections, and stay informed about relevant legislation and available support resources.",
         "category": "fullstack",
@@ -42,6 +30,18 @@
         "links": {
             "live": "https://courier-gut8.onrender.com",
             "github": "https://github.com/cukJAa/courier"
+        }
+    },
+    {
+        "title": "n'Log Art",
+        "description": "n'LOG Gallery is an online art platform that brings traditional Albanian art to a wider audience. The gallery features a curated collection of original paintings and handcrafted olive wood sculptures, each carrying the spirit of Albanian culture, heritage, and craftsmanship. Visitors can browse the collection, view detailed product pages, and place orders directly through the website.",
+        "category": "fullstack",
+        "image": "images/nlogArt.webp",
+        "icon": "",
+        "technologies": "HTML, CSS, JavaScript",
+        "links": {
+            "live": "https://www.nlogart.com",
+            "github": "https://github.com/cukJAa/LogArt"
         }
     }
 ]

@@ -12,7 +12,15 @@ def main():
     print(os.path.isdir(projects_folder))
     print(os.listdir("/home/cukjahp/Desktop/portofolio/projects"))
     
-    projects = []
+    main_projects_json_path  = "/home/cukjahp/Desktop/portofolio/portofolioMain/projects.json"
+
+    if os.path.exists(main_projects_json_path):
+        with open(main_projects_json_path, "r") as f:
+            projects = json.load(f)
+    else:
+        projects = []
+
+    existing_titles = {p["title"] for p in projects}
 
     for folder in os.listdir(projects_folder):
         print(folder)
@@ -30,10 +38,12 @@ def main():
             project_data = json.load(f)
             print(json.dumps(project_data, indent=4))
         print(f.closed)
+        if project_data["title"] in existing_titles:
+            print(f'Project {project_data["title"]} already exists, skipping')
+            continue
         projects.append(project_data)
-        
+
     print(f'Projects list from global variable is:  \n{projects}' )
-    main_projects_json_path  = "/home/cukjahp/Desktop/portofolio/portofolioMain/projects.json"
     with open(main_projects_json_path, 'w') as f:
         json.dump(projects, f, indent=4)
 
