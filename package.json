@@ -1,0 +1,24 @@
+{
+  "name": "portofoliomain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i src/input.css -o css/style.css --minify",
+    "watch": "npx tailwindcss -i src/input.css -o css/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cukJAa/cukJAa.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cukJAa/cukJAa.github.io/issues"
+  },
+  "homepage": "https://github.com/cukJAa/cukJAa.github.io#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

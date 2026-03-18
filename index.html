@@ -7,105 +7,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline';
+                 style-src 'self';
+                 font-src 'self';
+                 img-src 'self' data:;
+                 connect-src 'self';" />
   <title>Jurgen Çukaj | Developer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
 
-  <!--
-    WHY CDN and not npm?
-    - For a portfolio (static site) CDN is perfectly fine
-    - No build step needed, open the file and it works
-    - When you get a job or build real apps → switch to npm + Tailwind CLI
-  -->
-
-  <script>
-    /*
-      Tailwind config: this is where you EXTEND Tailwind's defaults.
-      Instead of typing long color hex codes everywhere, you define
-      a name once here and use it like any Tailwind class.
-
-      primary → main dark background
-      card    → slightly lighter dark for cards
-      accent  → the highlight/brand color (sky blue)
-    */
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#0f172a",   /* slate-900 */
-            card:    "#1e293b",   /* slate-800 */
-            accent:  "#38bdf8",   /* sky-400   */
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /*
-      WHY use <style> if we have Tailwind?
-      Some things Tailwind can't do easily (custom animations, gradients on text).
-      We keep it minimal — only what Tailwind can't handle.
-    */
-
-    /* Makes text show as a gradient instead of a solid color */
-    .gradient-text {
-      background: linear-gradient(90deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      background-clip: text;           /* standard property for non-webkit browsers */
-      -webkit-text-fill-color: transparent;
-      color: transparent;              /* fallback for browsers that don't support -webkit-text-fill-color */
-    }
-
-    /* Blinking cursor effect on the hero name */
-    .cursor::after {
-      content: "|";
-      animation: blink 1s step-end infinite;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
-    }
-
-    /* Elements start invisible and slide up, then become visible when JS adds .visible */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Breadcrumb slide-in animation
-       The section name slides in from the left and settles into place */
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(-10px);  /* starts 10px to the left */
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);      /* ends at its normal position */
-      }
-    }
-    @keyframes slideOut {
-      from {
-        opacity: 1;
-        transform: translateX(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateX(10px);   /* exits to the right */
-      }
-    }
-    .breadcrumb-enter {
-      animation: slideIn 0.3s ease forwards;
-    }
-    .breadcrumb-exit {
-      animation: slideOut 0.2s ease forwards;
-    }
-  </style>
 </head>
 
 <!-- ============================================================

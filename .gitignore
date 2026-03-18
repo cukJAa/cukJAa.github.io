@@ -1,3 +1,4 @@
 deploy.sh
 build_projects.py
+node_modules/
 
