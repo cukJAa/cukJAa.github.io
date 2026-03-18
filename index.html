@@ -157,7 +157,7 @@
         <li><a href="#contact"  class="hover:text-accent transition">Contact</a></li>
         <!-- Resume button: has a visible border to stand out from other links -->
         <li>
-          <a href="assets/cv.pdf" target="_blank"
+          <a href="assets/cvPdf/JurgenCukaj28.pdf" target="_blank"
              class="border border-accent text-accent px-3 py-1 rounded
                     hover:bg-accent hover:text-primary transition">
             Resume
@@ -444,7 +444,7 @@
         The trick: description has flex-1 → it grows to fill space
         So all cards are equal height and badges align at the bottom
       -->
-      <div id="projects-grid" class="grid md:grid-cols-2 gap-8">
+      <div id="projects-grid" class="grid md:grid-cols-3 gap-8">
 
         <!-- ── PROJECT CARD TEMPLATE ──────────────────────────────
           To add a new project: copy this block, change the values.
@@ -455,6 +455,12 @@
 
 
       </div><!-- /projects-grid -->
+
+      <div id="coming-soon" class="hidden text-center py-16">
+        <p class="text-slate-400 text-lg">Coming Soon</p>
+        <p class="text-slate-600 text-sm mt-2">Projects in this category are on the way.</p>
+      </div>
+
     </div>
   </section>
 
@@ -480,15 +486,18 @@
         I'll get back to you as soon as possible.
       </p>
 
-      <a href="mailto:you@email.com"
+      <a href="mailto:jurgencukaj@gmail.com"
          class="inline-block bg-accent text-primary font-semibold px-8 py-4 rounded-lg
-                hover:opacity-90 transition text-lg mb-10">
+                hover:opacity-90 transition text-lg mb-4">
         Say Hello →
       </a>
+      <p class="text-slate-500 text-sm mb-10">
+        or copy directly: <span class="text-accent select-all cursor-pointer">jurgencukaj@gmail.com</span>
+      </p>
 
       <div class="flex justify-center gap-8 text-slate-500 text-sm mt-6">
-        <a href="https://github.com/yourusername"      target="_blank" class="hover:text-accent transition">GitHub</a>
-        <a href="https://linkedin.com/in/yourusername" target="_blank" class="hover:text-accent transition">LinkedIn</a>
+        <a href="https://github.com/cukJAa"      target="_blank" class="hover:text-accent transition">GitHub</a>
+        <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217" target="_blank" class="hover:text-accent transition">LinkedIn</a>
         <!-- <a href="https://twitter.com/yourusername"     target="_blank" class="hover:text-accent transition">Twitter / X</a> -->
       </div>
 
@@ -576,14 +585,19 @@
       // Loop through sections and find which one the user is IN
       // A section is "active" when its top has scrolled past the top of the viewport
       // We use 150px offset to account for the navbar height + a bit of buffer
-      sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        // If the section's top is above 150px from the top of the viewport,
-        // the user has scrolled INTO or PAST this section
-        if (rect.top <= 150) {
-          activeId = section.id;
-        }
-      });
+      // If user has scrolled to the bottom of the page, activate the last section
+      if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 50) {
+        activeId = 'contact';
+      } else {
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          // If the section's top is above 150px from the top of the viewport,
+          // the user has scrolled INTO or PAST this section
+          if (rect.top <= 150) {
+            activeId = section.id;
+          }
+        });
+      }
 
       const newSuffix = sectionNames[activeId] || '';
 
@@ -632,13 +646,19 @@
     */
     function filterProjects(category, clickedBtn) {
       // Show/hide cards
+      let visibleCount = 0;
       document.querySelectorAll('.project-card').forEach(card => {
         if (category === 'all' || card.dataset.category === category) {
           card.style.display = 'flex';
+          visibleCount++;
         } else {
           card.style.display = 'none';
         }
       });
+
+      // Show "Coming Soon" if no projects match the selected category
+      const comingSoon = document.getElementById('coming-soon');
+      comingSoon.classList.toggle('hidden', visibleCount > 0);
 
       // Reset all buttons to inactive style
       document.querySelectorAll('[onclick^="filterProjects"]').forEach(btn => {
