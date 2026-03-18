@@ -38,7 +38,7 @@
         "category": "fullstack",
         "image": "images/nlogArt.webp",
         "icon": "",
-        "technologies": "HTML, CSS, JavaScript",
+        "technologies": ["HTML", "CSS", "JavaScript"],
         "links": {
             "live": "https://www.nlogart.com",
             "github": "https://github.com/cukJAa/LogArt"
