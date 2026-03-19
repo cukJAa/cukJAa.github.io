@@ -52,7 +52,7 @@
         "title": "Ch\u00e2teau Braha",
         "description": "Multi-page website for Ch\u00e2teau Braha, a prestigious Albanian winery and hospitality estate. Features an elegant design showcasing their wine collection, estate grounds, rich history, and luxury hospitality offerings. Built with a custom CSS design system, smooth scroll animations, responsive mobile navigation, and optimized WebP imagery.",
         "category": "fullstack",
-        "image": "images/chateauBraha.webp",
+        "image": "images/chateauBraha.png",
         "icon": "",
         "technologies": [
             "HTML",

@@ -60,13 +60,19 @@
         text-sm     → smaller font for nav links
         text-slate-400 → muted gray color (not full white)
       -->
-      <ul class="flex gap-6 text-sm text-slate-400">
-        <!-- hover:text-accent transition → turns sky-blue on hover, smoothly -->
+      <!-- Hamburger button — visible on mobile only -->
+      <button id="menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu">
+        <span class="block w-6 h-0.5 bg-slate-400 transition"></span>
+        <span class="block w-6 h-0.5 bg-slate-400 transition"></span>
+        <span class="block w-6 h-0.5 bg-slate-400 transition"></span>
+      </button>
+
+      <!-- Nav links — hidden on mobile, flex on desktop -->
+      <ul id="nav-links" class="hidden md:flex gap-6 text-sm text-slate-400">
         <li><a href="#about"    class="hover:text-accent transition">About</a></li>
         <li><a href="#skills"   class="hover:text-accent transition">Skills</a></li>
         <li><a href="#projects" class="hover:text-accent transition">Projects</a></li>
         <li><a href="#contact"  class="hover:text-accent transition">Contact</a></li>
-        <!-- Resume button: has a visible border to stand out from other links -->
         <li>
           <a href="assets/cvPdf/JurgenCukajCvLnk.pdf" target="_blank"
              class="border border-accent text-accent px-3 py-1 rounded
@@ -75,6 +81,23 @@
           </a>
         </li>
       </ul>
+
+      <!-- Mobile menu — slides down below navbar -->
+      <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-primary/95 backdrop-blur-sm border-b border-slate-800">
+        <ul class="flex flex-col items-center gap-6 py-8 text-sm text-slate-400">
+          <li><a href="#about"    class="hover:text-accent transition mobile-link">About</a></li>
+          <li><a href="#skills"   class="hover:text-accent transition mobile-link">Skills</a></li>
+          <li><a href="#projects" class="hover:text-accent transition mobile-link">Projects</a></li>
+          <li><a href="#contact"  class="hover:text-accent transition mobile-link">Contact</a></li>
+          <li>
+            <a href="assets/cvPdf/JurgenCukajCvLnk.pdf" target="_blank"
+               class="border border-accent text-accent px-3 py-1 rounded
+                      hover:bg-accent hover:text-primary transition">
+              Resume
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
@@ -446,6 +469,24 @@
       - When it enters the viewport (isIntersecting = true), we add class .visible
       - The CSS .fade-in.visible transition animates it in (opacity + translateY)
     */
+    /*
+      MOBILE MENU TOGGLE
+      Toggles the mobile dropdown menu and closes it when a link is clicked.
+    */
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
