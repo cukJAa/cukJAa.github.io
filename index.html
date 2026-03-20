@@ -74,7 +74,7 @@
         <li><a href="#projects" class="hover:text-accent transition">Projects</a></li>
         <li><a href="#contact"  class="hover:text-accent transition">Contact</a></li>
         <li>
-          <a href="assets/cvPdf/JurgenCukajCvLnk.pdf" target="_blank"
+          <a href="assets/cvPdf/JurgenCukajCvLnk.pdf" target="_blank" rel="noopener noreferrer"
              class="border border-accent text-accent px-3 py-1 rounded
                     hover:bg-accent hover:text-primary transition">
             Resume
@@ -156,8 +156,8 @@
 
     <!-- Social links row -->
     <div class="flex gap-8 mt-12 text-slate-500 text-sm">
-      <a href="https://github.com/cukJAa"       target="_blank" class="hover:text-accent transition">GitHub</a>
-      <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217/"  target="_blank" class="hover:text-accent transition">LinkedIn</a>
+      <a href="https://github.com/cukJAa"       target="_blank" rel="noopener noreferrer" class="hover:text-accent transition">GitHub</a>
+      <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217/"  target="_blank" rel="noopener noreferrer" class="hover:text-accent transition">LinkedIn</a>
       <a href="mailto:jurgencukaj@gmail.com"                               class="hover:text-accent transition">Email</a>
     </div>
 
@@ -420,18 +420,18 @@
         I'll get back to you as soon as possible.
       </p>
 
-      <a href="mailto:jurgencukaj@gmail.com"
+      <a id="email-btn" href="#"
          class="inline-block bg-accent text-primary font-semibold px-8 py-4 rounded-lg
                 hover:opacity-90 transition text-lg mb-4">
         Say Hello →
       </a>
       <p class="text-slate-500 text-sm mb-10">
-        or copy directly: <span class="text-accent select-all cursor-pointer">jurgencukaj@gmail.com</span>
+        or copy directly: <span id="email-text" class="text-accent select-all cursor-pointer"></span>
       </p>
 
       <div class="flex justify-center gap-8 text-slate-500 text-sm mt-6">
-        <a href="https://github.com/cukJAa"      target="_blank" class="hover:text-accent transition">GitHub</a>
-        <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217" target="_blank" class="hover:text-accent transition">LinkedIn</a>
+        <a href="https://github.com/cukJAa"      target="_blank" rel="noopener noreferrer" class="hover:text-accent transition">GitHub</a>
+        <a href="https://www.linkedin.com/in/jurgen-cukaj-175a34217" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition">LinkedIn</a>
         <!-- <a href="https://twitter.com/yourusername"     target="_blank" class="hover:text-accent transition">Twitter / X</a> -->
       </div>
 
@@ -485,6 +485,17 @@
         mobileMenu.classList.add('hidden');
       });
     });
+
+    /*
+      EMAIL OBFUSCATION
+      The email is split into parts and assembled by JS at runtime.
+      Spam bots that scrape HTML won't find a plain-text email address.
+    */
+    const emailUser = 'jurgencukaj';
+    const emailDomain = 'gmail.com';
+    const emailFull = emailUser + '@' + emailDomain;
+    document.getElementById('email-btn').href = 'mailto:' + emailFull;
+    document.getElementById('email-text').textContent = emailFull;
 
 
     const observer = new IntersectionObserver((entries) => {
@@ -646,84 +657,95 @@
       // Step 3: Now "projects" is a JavaScript array we can loop through
       .then(projects => {
 
-        // Get the empty div where cards will go
         const grid = document.getElementById('projects-grid');
 
         // Color mapping: each category gets a different accent color
-        // This matches the colors used in the Skills section
         const colors = {
-          fullstack: 'accent',       // sky blue
-          datascience: 'purple-400', // purple
-          security: 'red-400'       // red
+          fullstack: 'accent',
+          datascience: 'purple-400',
+          security: 'red-400'
         };
 
-        // Build HTML for ALL cards, then insert at once
-        // .map() transforms each project object into an HTML string
-        // .join('') combines all the strings into one big string
-        grid.innerHTML = projects.map(project => {
+        // Allowed link prefixes — only allow http/https URLs in project data
+        function isSafeUrl(url) {
+          return url.startsWith('https://') || url.startsWith('http://');
+        }
 
-          // Pick the color for this project's category
-          // If category not found in our map, default to 'accent'
+        // Build cards using safe DOM methods (no innerHTML)
+        // This prevents XSS if project.json data ever contains malicious HTML
+        projects.forEach(project => {
           const color = colors[project.category] || 'accent';
 
-          // Build the tech badges
-          // project.technologies is an array like ["Django", "PostgreSQL", "Bootstrap"]
-          // .map() turns each tech name into a <span> badge
-          // .join('') glues them together into one string
-          const techBadges = project.technologies
-            .map(tech => `<span class="bg-slate-900 text-${color} text-xs px-2 py-1 rounded">${tech}</span>`)
-            .join('');
+          // Card wrapper
+          const card = document.createElement('div');
+          card.className = `project-card bg-card border border-slate-700 rounded-xl overflow-hidden hover:border-${color} transition flex flex-col`;
+          card.dataset.category = project.category;
 
-          // Build the links (GitHub and/or Live)
-          // The ? : is a ternary — "if this exists, show the link, otherwise show nothing"
-          const githubLink = project.links.github
-            ? `<a href="${project.links.github}" target="_blank" class="text-slate-500 hover:text-${color} transition">GitHub</a>`
-            : '';
-          const liveLink = project.links.live
-            ? `<a href="${project.links.live}" target="_blank" class="text-slate-500 hover:text-${color} transition">Live ↗</a>`
-            : '';
+          // Image
+          if (project.image) {
+            const img = document.createElement('img');
+            img.src = project.image;
+            img.alt = project.title;
+            img.className = 'w-full h-56 object-cover';
+            card.appendChild(img);
+          }
 
-          // Build the image HTML
-          // overflow-hidden on the card clips the image to the rounded corners
-          // The card uses p-0 at top (no padding) so image touches edges
-          // Then a separate div with p-6 wraps the text content below
-          const imageHtml = project.image
-            ? `<img src="${project.image}" alt="${project.title}" class="w-full h-56 object-cover" />`
-            : '';
+          // Content wrapper
+          const content = document.createElement('div');
+          content.className = 'p-6 flex flex-col gap-4 flex-1';
 
-          return `
-            <div class="project-card bg-card border border-slate-700 rounded-xl
-                        overflow-hidden hover:border-${color} transition flex flex-col"
-                 data-category="${project.category}">
+          // Links row
+          const linksRow = document.createElement('div');
+          linksRow.className = 'flex gap-4 text-sm';
 
-              <!-- Screenshot preview (if available) — sits at the top, edge to edge -->
-              ${imageHtml}
+          if (project.links.github && isSafeUrl(project.links.github)) {
+            const ghLink = document.createElement('a');
+            ghLink.href = project.links.github;
+            ghLink.target = '_blank';
+            ghLink.rel = 'noopener noreferrer';
+            ghLink.className = `text-slate-500 hover:text-${color} transition`;
+            ghLink.textContent = 'GitHub';
+            linksRow.appendChild(ghLink);
+          }
 
-              <!-- Card content with padding -->
-              <div class="p-6 flex flex-col gap-4 flex-1">
+          if (project.links.live && isSafeUrl(project.links.live)) {
+            const liveLink = document.createElement('a');
+            liveLink.href = project.links.live;
+            liveLink.target = '_blank';
+            liveLink.rel = 'noopener noreferrer';
+            liveLink.className = `text-slate-500 hover:text-${color} transition`;
+            liveLink.textContent = 'Live \u2197';
+            linksRow.appendChild(liveLink);
+          }
 
-                <!-- Links row: GitHub + Live on the left -->
-                <div class="flex gap-4 text-sm">
-                  ${githubLink}
-                  ${liveLink}
-                </div>
+          content.appendChild(linksRow);
 
-                <!-- Title -->
-                <h3 class="text-white font-semibold text-lg">${project.title}</h3>
+          // Title (textContent = safe, no HTML injection)
+          const title = document.createElement('h3');
+          title.className = 'text-white font-semibold text-lg';
+          title.textContent = project.title;
+          content.appendChild(title);
 
-                <!-- Description -->
-                <p class="text-slate-400 text-sm leading-relaxed flex-1">
-                  ${project.description}
-                </p>
+          // Description
+          const desc = document.createElement('p');
+          desc.className = 'text-slate-400 text-sm leading-relaxed flex-1';
+          desc.textContent = project.description;
+          content.appendChild(desc);
 
-                <!-- Tech badges -->
-                <div class="flex flex-wrap gap-2">
-                  ${techBadges}
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');  // .join('') combines all card strings into one
+          // Tech badges
+          const badgesRow = document.createElement('div');
+          badgesRow.className = 'flex flex-wrap gap-2';
+          project.technologies.forEach(tech => {
+            const badge = document.createElement('span');
+            badge.className = `bg-slate-900 text-${color} text-xs px-2 py-1 rounded`;
+            badge.textContent = tech;
+            badgesRow.appendChild(badge);
+          });
+          content.appendChild(badgesRow);
+
+          card.appendChild(content);
+          grid.appendChild(card);
+        });
 
       })
 
