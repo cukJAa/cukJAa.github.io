@@ -63,5 +63,20 @@
             "live": "",
             "github": "https://github.com/cukJAa/chateauBraha"
         }
+    },
+    {
+        "title": "Cash Register",
+        "description": "Local web platform you can run inside you network to keep track of the work for your employees. This register also keeps track of daily income work.",
+        "category": "fullstack",
+        "image": "",
+        "icon": " ",
+        "technologies": [
+            "Python",
+            "Django"
+        ],
+        "links": {
+            "live": "",
+            "github": ""
+        }
     }
 ]
